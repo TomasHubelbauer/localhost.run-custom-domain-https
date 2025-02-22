@@ -5,5 +5,5 @@ node_modules
 bun.lock
 
 # HTTPS/LE
-fullchain.pem
-privkey.pem
+fullchain-*.pem
+privkey-*.pem

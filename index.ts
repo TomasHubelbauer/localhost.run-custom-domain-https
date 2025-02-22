@@ -1,16 +1,20 @@
 import Bun from 'bun';
+import index from './index.html';
+
+const hostName = process.argv[2];
+if (!hostName) {
+  throw new Error('Please provide a hostname to use for the TLS certificates');
+}
 
 Bun.serve({
-  fetch(request) {
-    console.log(request.url);
-    return new Response('<h1>Hello, World!</h1>',  {
-      headers: {
-        'Content-Type': 'text/html'
-      }
-    });
+  static: {
+    '/': index,
+  },
+  fetch() {
+    return new Response(null, { status: 404 });
   },
   tls: {
-    cert: Bun.file('./fullchain.pem'),
-    key: Bun.file('./privkey.pem'),
+    cert: Bun.file(`./fullchain-${hostName}.pem`),
+    key: Bun.file(`./privkey-${hostName}.pem`),
   },
 });

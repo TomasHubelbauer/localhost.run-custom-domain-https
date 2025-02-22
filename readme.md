@@ -219,6 +219,15 @@ For an apex domain:
    The banner in the domain detail in the Localhost.run admin will disappear
    once Localhost.run notices your DNS records.
 
-3. Create a public and private key value pair for the domain using LE
+3. Run the site in HTTP tunnel mode to be able to host the LE HTTP challenge
+
+   `ssh -R example.org:80:localhost:3000 localhost.run`
+
+4. Create a public and private key value pair for the domain using LE
 
    Follow the same steps as shown in the above section.
+
+5. Adjust the server to use the certificates for the custom domain name
+6. Run the site in TLS tunnel mode to use the custom certificates for the domain
+
+   `ssh -R example.org:443:localhost:3000 localhost.run`
