@@ -1,0 +1,9 @@
+# NPM
+node_modules
+
+# Bun
+bun.lock
+
+# HTTPS/LE
+fullchain.pem
+privkey.pem
