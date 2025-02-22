@@ -191,3 +191,34 @@ DNS records of the custom domain to point to Localhost.run and add the custom
 domain the the Localhost.run admin interface instead of the custom subdomain.
 
 See https://localhost.run/docs/custom-domains for how to do that.
+
+For an apex domain:
+
+1. Add new A records for these IPs:
+
+   Use `@` for the "host" value if required.
+
+   - 54.161.197.247
+   - 54.82.85.249
+   - 35.171.254.69
+
+   Use https://toolbox.googleapps.com/apps/dig/#A/ to check the records and make
+   sure they are live.
+   This might take a while due to DNS TTL.
+   The banner in the domain detail in the Localhost.run admin will disappear
+   once Localhost.run notices your DNS records.
+
+2. Add a new TXT record with the value show in the domain detail in the admin
+
+   Set the "host" value to `_lhr.example.org` (use your own domain name here).
+   (Or maybe just to `_lhr`? I am not sure which one of the two worked.)
+
+   Use https://toolbox.googleapps.com/apps/dig/#TXT/ to check the records and
+   make sure they are live.
+   This might take a while due to DNS TTL.
+   The banner in the domain detail in the Localhost.run admin will disappear
+   once Localhost.run notices your DNS records.
+
+3. Create a public and private key value pair for the domain using LE
+
+   Follow the same steps as shown in the above section.
