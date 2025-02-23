@@ -1,20 +1,24 @@
-import Bun from 'bun';
+import Bun, { $ } from 'bun';
 import index from './index.html';
 
-const hostName = process.argv[2];
-if (!hostName) {
-  throw new Error('Please provide a hostname to use for the TLS certificates');
+const name = process.argv[2];
+if (!name) {
+  throw new Error('Pass the domain name as an argument to this script!');
 }
 
-Bun.serve({
+const { hostname, port } = Bun.serve({
   static: {
     '/': index,
   },
   fetch() {
     return new Response(null, { status: 404 });
   },
+
+  // @ts-expect-error https://github.com/oven-sh/bun/issues/13167
   tls: {
-    cert: Bun.file(`./fullchain-${hostName}.pem`),
-    key: Bun.file(`./privkey-${hostName}.pem`),
+    cert: Bun.file(`./fullchain-${name}.pem`),
+    key: Bun.file(`./privkey-${name}.pem`),
   },
 });
+
+await $`ssh -R ${name}:443:${hostname}:${port} localhost.run`;

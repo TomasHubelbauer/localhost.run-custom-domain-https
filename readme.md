@@ -168,7 +168,7 @@ To handle the certificates:
        ```
 
        Ignore the TypeScript types error, see here for a tracking issue:
-       https://github.com/oven-sh/bun/issues/17558
+       https://github.com/oven-sh/bun/issues/13167
     
     12. Establish a TLS tunnel to the local server with the certificates:
 
@@ -231,3 +231,38 @@ For an apex domain:
 6. Run the site in TLS tunnel mode to use the custom certificates for the domain
 
    `ssh -R example.org:443:localhost:3000 localhost.run`
+
+### Self-tunneling server snippet
+
+I've expanded the script to start the SSH tunnel from within itself once the
+server starts so only a single command is needed to get the session going now:
+
+```typescript
+await $`ssh -R ${name}:443:${hostname}:${port} localhost.run`;
+```
+
+Note that we can't do something like this:
+
+```typescript
+let state: undefined | 'a' | 'b' | 'c';
+for await (let line of $`ssh -R ${name}:443:${hostname}:${port} localhost.run`.lines()) {
+  switch (state) {
+    // Ensure the output is going as we expect it line-by-line and advance state
+  }
+}
+```
+
+This is because `$.lines` is buffered and only returns at the end of the command
+execution, but the SSH tunnel is a long-running process that will run as long as
+the server itself, so we need to be able to get its messages interactively.
+
+See tracking issue here: https://github.com/oven-sh/bun/issues/8365
+
+With this, killing the script now works like this:
+
+1. Press Ctrl + C to instruct the SSH tunnel to close
+2. Wait for the SSH command to print "Connection to localhost.run closed."
+3. Press Ctrl + C again to kill the Bun process itself
+
+Spamming Ctrl + C twice closes the process right away without waiting on the
+remote host to process the Ctrl + C forwarded to it.
